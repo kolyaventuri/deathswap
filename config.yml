@@ -1,3 +1,4 @@
-minSwapTime: 20
-maxSwapTime: 75
-swapRadius: 400
+minSwapDuration: 20
+maxSwapDuration: 75
+minSwapRadius: 400
+maxSwapRadius: 1200

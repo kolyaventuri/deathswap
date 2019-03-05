@@ -39,13 +39,13 @@ public class Game {
 		this.deadPlayers = new ArrayList<Player>();
 		this.id = IDGenerator.random(this.idLength);
 		
-		this.swapRadius = getRandomRadius(400, 1200);
-		
-		/* FileConfiguration config = gameManager.config;
+		FileConfiguration config = gameManager.config;
 		
 		this.minSwapDuration = config.getInt("minSwapDuration");
 		this.maxSwapDuration = config.getInt("maxSwapDuration");
-		this.swapRadius = config.getInt("swapRadius"); */
+		int minSwapRadius = config.getInt("minSwapRadius");
+		int maxSwapRadius = config.getInt("maxSwapRadius");
+		this.swapRadius = getRandomRadius(minSwapRadius, maxSwapRadius);
 		
 		this.players.add(owner);
 		
@@ -57,7 +57,7 @@ public class Game {
 		if (this.players.size() == 1) {
 			this.owner.sendMessage("You cannot start a Death Swap game with only 1 player.");
 			return;
-		} 
+		}
 		
 		this.startLocation = this.owner.getLocation();
 		

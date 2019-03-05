@@ -50,7 +50,7 @@ public class GameManager {
 			}
 		}
 		
-		player.sendMessage("You haven't started a game of Death Swap. Start one with " + ChatColor.YELLOW + ChatColor.BOLD + "/deathswap start");
+		player.sendMessage("You haven't started a game of Death Swap. Start one with " + ChatColor.YELLOW + ChatColor.BOLD + "/deathswap create");
 	}
 	
 	public void join(Player player, String gameId) {
