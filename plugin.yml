@@ -1,11 +1,11 @@
 name: DeathSwap
 main: co.kolya.deathswap.DeathSwap
-version: 1.0.0
+version: 1.1.0
 author: Kolya Venturi
 commands:
    deathswap:
-      description: Create, start, and join DeathSwap games
-      usage: /deathswap [create|join|start] [gameID]
+      description: Create, start, and join Death Swap games
+      usage: /deathswap [create | join | start| addPlayer] <gameID | username>
    ds:
-      description: Create, start, and join DeathSwap games
-      usage: /ds [create|join|start] [gameID]
+      description: Alias of /deathswap
+      usage: /ds [create | join | start | addPlayer] <gameId | username>
