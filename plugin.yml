@@ -5,7 +5,7 @@ author: Kolya Venturi
 commands:
    deathswap:
       description: Create, start, and join Death Swap games
-      usage: /deathswap [create | join | start| addPlayer] <gameID | username>
+      usage: /deathswap [create | join | start | addPlayer | end | help] <gameID | username>
    ds:
       description: Alias of /deathswap
-      usage: /ds [create | join | start | addPlayer] <gameId | username>
+      usage: /ds [create | join | start | addPlayer | end | help] <gameId | username>

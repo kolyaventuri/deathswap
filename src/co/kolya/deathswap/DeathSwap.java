@@ -1,6 +1,7 @@
 package co.kolya.deathswap;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -60,6 +61,14 @@ public class DeathSwap extends JavaPlugin implements Listener {
 					} else {
 						sender.sendMessage("You must provide a player name to add them to your game!");
 					}
+			    } else if(command.equalsIgnoreCase("help")) {
+			    	sender.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + ChatColor.UNDERLINE + "Death Swap Help");
+			    	sender.sendMessage("    " + ChatColor.YELLOW + "create" + ChatColor.RESET + " - Creates a new Death Swap game");
+			    	sender.sendMessage("    " + ChatColor.YELLOW + "start" + ChatColor.RESET + " - Start the current Death Swap game (Owner only)");
+			    	sender.sendMessage("    " + ChatColor.YELLOW + "end" + ChatColor.RESET + " - Forces your Death Swap game to end (Owner only)");
+			    	sender.sendMessage("    " + ChatColor.YELLOW + "join <game ID>" + ChatColor.RESET + " - Joins a Death Swap game, using the provided ID");
+			    	sender.sendMessage("    " + ChatColor.YELLOW + "addPlayer <username>" + ChatColor.RESET + " - Adds the given user to your game (Owner only)");
+			    	sender.sendMessage("    " + ChatColor.YELLOW + "help" + ChatColor.RESET + " - Show this help message");
 			    } else {
 					return false;
 				}
