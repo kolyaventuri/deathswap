@@ -53,7 +53,14 @@ public class DeathSwap extends JavaPlugin implements Listener {
 					}
 				} else if (command.equalsIgnoreCase("end")) {
 					this.gameManager.end(player);
-				}  else {
+				} else if (command.equalsIgnoreCase("addPlayer")) {
+					if (args.length >= 2) {
+						String playerName = args[1];
+						this.gameManager.addPlayer(player, playerName);
+					} else {
+						sender.sendMessage("You must provide a player name to add them to your game!");
+					}
+			    } else {
 					return false;
 				}
 				return true;

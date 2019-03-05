@@ -18,9 +18,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class Game {
 	private final int idLength = 5;
-	private int minSwapDuration;
-	private int maxSwapDuration;
-	private int swapRadius;
+	private int minSwapDuration = 20;
+	private int maxSwapDuration = 75;
+	private int swapRadius = 400;
 	
 	private GameManager gameManager;
 	private BukkitTask swapTimer = null;
@@ -39,11 +39,13 @@ public class Game {
 		this.deadPlayers = new ArrayList<Player>();
 		this.id = IDGenerator.random(this.idLength);
 		
-		FileConfiguration config = gameManager.config;
+		this.swapRadius = getRandomRadius(400, 1200);
+		
+		/* FileConfiguration config = gameManager.config;
 		
 		this.minSwapDuration = config.getInt("minSwapDuration");
 		this.maxSwapDuration = config.getInt("maxSwapDuration");
-		this.swapRadius = config.getInt("swapRadius");
+		this.swapRadius = config.getInt("swapRadius"); */
 		
 		this.players.add(owner);
 		
@@ -76,6 +78,10 @@ public class Game {
 			this.swapTimer.cancel();
 		}
 		this.gameManager.end(this);
+	}
+	
+	public void addPlayer(Player player) {
+		join(player);
 	}
 	
 	public boolean hasPlayer(Player player) {
@@ -111,6 +117,8 @@ public class Game {
 	private void clearStats() {
 		for (Player player : this.players) {
 			player.setHealth(20);
+			player.setExhaustion(0);
+			player.setFoodLevel(20);
 			
 			Collection<PotionEffect> potions = player.getActivePotionEffects();
 			for (PotionEffect potion : potions) {
@@ -168,13 +176,12 @@ public class Game {
 		Point[] points = new Point[playerCount];
 		World world = this.owner.getWorld();
 		
-		Location origin = this.owner.getLocation();
+		Location origin = getRandomOrigin(swapRadius);
 		int x = origin.getBlockX();
 		int y = origin.getBlockZ(); // Y is up technically, but y will be easier to visualize in code
 		int radius = this.swapRadius;
 		
-		double slice = 2 * Math.PI / playerCount;
-		
+		double slice = Math.toRadians(360 / playerCount) + getRandomAngle();
 		for (int i = 0; i < playerCount; i++) {
 			double angle = slice * i;
 			
@@ -204,7 +211,6 @@ public class Game {
 			
 			@Override
 			public void run() {
-				owner.sendMessage(timeLeft + " seconds left");
 				if (timeLeft < 1) {
 					performSwap();
 					this.cancel();
@@ -240,13 +246,34 @@ public class Game {
 				index = 0;
 			}
 			
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 5, 1));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 5, 5));
 			player.teleport(points[index]);
 		}
 	}
 	
 	private int getRandomTime() {
 		return ThreadLocalRandom.current().nextInt(minSwapDuration, maxSwapDuration + 1);
+	}
+	
+	private double getRandomAngle() {
+		int angle = ThreadLocalRandom.current().nextInt(0, 360);
+		return Math.toRadians((double)angle);
+	}
+	
+	private int getRandomRadius(int min, int max) {
+		return ThreadLocalRandom.current().nextInt(min, max + 1);
+	}
+	
+	private Location getRandomOrigin(int maxDelta) {
+		int deltaA = ThreadLocalRandom.current().nextInt(-maxDelta, maxDelta + 1);
+		int deltaB = ThreadLocalRandom.current().nextInt(-maxDelta, maxDelta + 1);
+		
+		World world = this.owner.getWorld();
+		
+		Location origin = this.startLocation; 
+		Location newOrigin = new Location(world, origin.getBlockX() + deltaA, 0, origin.getBlockZ() + deltaB);
+		
+		return world.getHighestBlockAt(newOrigin).getLocation();
 	}
 	
 	private void broadcast(String message) {

@@ -1,8 +1,10 @@
 package co.kolya.deathswap;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -70,6 +72,38 @@ public class GameManager {
 		}
 		
 		player.sendMessage("I can't seem to find the DeathSwap game " + ChatColor.YELLOW + gameId);
+	}
+	
+	public void addPlayer(Player owner, String playerName) {
+		Game ownersGame = null;
+		for (Game game : this.games) {
+			if (game.owner.equals(owner)) {
+				ownersGame = game;
+				break;
+			}
+ 		}
+		
+		if (ownersGame == null) {
+			owner.sendMessage("You must create a game before you can invite players.");
+		}
+		
+		World world = owner.getWorld();
+		List<Player> players = world.getPlayers();
+		Player player = null;
+		
+		for (Player p : players) {
+			if (p.getDisplayName().equalsIgnoreCase(playerName)) {
+				player = p;
+				break;
+			}
+		}
+		
+		if (player == null) {
+			owner.sendMessage("Can't find that player.");
+			return;
+		}
+		
+		ownersGame.addPlayer(player);
 	}
 	
 	public void end(Player player) {
