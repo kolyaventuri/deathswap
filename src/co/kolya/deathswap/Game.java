@@ -308,22 +308,28 @@ public class Game {
 			}
 		}
 		
-		Player[] players = swappable.toArray(new Player[swappable.size()]);
-		Location[] points = new Location[players.length];
-		for (int i = 0; i < players.length; i++) {
-			points[i] = players[i].getLocation();
-		}
-		
-		for (int i = 0; i < players.length; i++) {
-			Player player = players[i];
-			int index = i + 1;
-			if (index == players.length) {
-				index = 0;
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				Player[] players = swappable.toArray(new Player[swappable.size()]);
+				Location[] points = new Location[players.length];
+				for (int i = 0; i < players.length; i++) {
+					points[i] = players[i].getLocation();
+				}
+				
+				for (int i = 0; i < players.length; i++) {
+					Player player = players[i];
+					int index = i + 1;
+					if (index == players.length) {
+						index = 0;
+					}
+					
+					player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 5, 5));
+					player.teleport(points[index]);
+				}
 			}
-			
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 5, 5));
-			player.teleport(points[index]);
-		}
+		}.runTaskLater(this.gameManager.plugin, 20L);
+		
 	}
 	
 	private int getRandomTime() {
