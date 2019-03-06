@@ -1,6 +1,10 @@
 package co.kolya.deathswap;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -9,10 +13,13 @@ import org.bukkit.scheduler.BukkitTask;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -51,6 +58,7 @@ public class Game {
 		
 		owner.sendMessage("Starting up a new game of Death Swap!");
 		owner.sendMessage("Game started! Your friends can join using " + ChatColor.YELLOW + ChatColor.BOLD + "/deathswap join " + this.id);
+		giveSpectatorItem(owner);
 	}
 	
 	public void start() {
@@ -74,6 +82,7 @@ public class Game {
 	
 	public void end() {
 		broadcast("Ending this game of Death Swap... Thanks for playing!");
+		clearStats();
 		if (this.swapTimer != null) {
 			this.swapTimer.cancel();
 		}
@@ -97,6 +106,7 @@ public class Game {
 	public void markPlayerAsDead(Player player) {
 		this.deadPlayers.add(player);
 		player.teleport(this.startLocation);
+		giveSpectatorItem(player);
 		
 		if (this.deadPlayers.size() >= this.players.size() - 1) {
 			// Player has won
@@ -114,6 +124,26 @@ public class Game {
 		}
 	}
 	
+	private void giveSpectatorItem(Player player) {
+		Inventory inventory = player.getInventory();
+		inventory.clear();
+		
+		ItemStack item = new ItemStack(Material.COMPASS);;
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName("Spectator Hopper");
+		
+		List<String> lore = new ArrayList<String>();
+		lore.add(ChatColor.YELLOW + "Rotate which player you are specating in this game.");
+		meta.setLore(lore);
+		
+		Glow glow = new Glow(new NamespacedKey(this.gameManager.plugin, "Enchantment.GLOW"));
+		meta.addEnchant(glow, 1, true);
+		
+		item.setItemMeta(meta);
+		
+		inventory.setItem(4, item);
+	}
+	
 	private void clearStats() {
 		for (Player player : this.players) {
 			player.setHealth(20);
@@ -125,7 +155,8 @@ public class Game {
 				player.removePotionEffect(potion.getType());
 			}
 			
-			player.getInventory().clear();
+			PlayerInventory inventory = player.getInventory();
+			inventory.clear();
 		}
 	}
 	
