@@ -64,7 +64,6 @@ public class Game {
 		
 		owner.sendMessage("Starting up a new game of Death Swap!");
 		owner.sendMessage("Game started! Your friends can join using " + ChatColor.YELLOW + ChatColor.BOLD + "/deathswap join " + this.id);
-		giveSpectatorItem(owner);
 	}
 	
 	public void start() {
