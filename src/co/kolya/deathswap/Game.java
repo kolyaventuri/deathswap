@@ -13,10 +13,13 @@ import org.bukkit.scheduler.BukkitTask;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -38,12 +41,15 @@ public class Game {
 	
 	private ArrayList<Player> players;
 	private ArrayList<Player> deadPlayers;
+	private Map<Player, Integer> spectators;
 	
 	public Game(Player owner, GameManager gameManager) {
 		this.gameManager = gameManager;
 		this.owner = owner;
 		this.players = new ArrayList<Player>();
 		this.deadPlayers = new ArrayList<Player>();
+		this.spectators = new HashMap<Player, Integer>();
+		
 		this.id = IDGenerator.random(this.idLength);
 		
 		FileConfiguration config = gameManager.config;
@@ -86,6 +92,11 @@ public class Game {
 		if (this.swapTimer != null) {
 			this.swapTimer.cancel();
 		}
+		
+		for (Player player : this.players) {
+			player.setGameMode(GameMode.SURVIVAL);
+		}
+		
 		this.gameManager.end(this);
 	}
 	
@@ -106,6 +117,9 @@ public class Game {
 	public void markPlayerAsDead(Player player) {
 		this.deadPlayers.add(player);
 		player.teleport(this.startLocation);
+		player.setGameMode(GameMode.SPECTATOR);
+		player.getInventory().clear();
+		
 		giveSpectatorItem(player);
 		
 		if (this.deadPlayers.size() >= this.players.size() - 1) {
@@ -124,6 +138,34 @@ public class Game {
 		}
 	}
 	
+	public void rotateSpectator(Player player) {
+		Object currIndex = this.spectators.get(player);
+		if (currIndex == null) { currIndex = 0; }
+		
+		int newIndex = (int)currIndex;
+		
+		for (int i = 0; i < this.players.size(); i++) {
+			newIndex++;
+			if (newIndex == this.players.size()) {
+				newIndex = 0;
+			}
+			
+			Player p = this.players.get(newIndex);
+			
+			if (!this.deadPlayers.contains(p)) {
+				break;
+			}
+		}
+		
+		this.spectators.put(player, newIndex);
+		this.setSpectating(player, this.players.get(newIndex));
+	}
+	
+	private void setSpectating(Player me, Player them) {
+		me.teleport(them);
+		me.sendTitle("Now spectating " + ChatColor.YELLOW + them.getDisplayName(), "", 10, 40, 20);
+	}
+	
 	private void giveSpectatorItem(Player player) {
 		Inventory inventory = player.getInventory();
 		inventory.clear();
@@ -138,6 +180,9 @@ public class Game {
 		
 		Glow glow = new Glow(new NamespacedKey(this.gameManager.plugin, "Enchantment.GLOW"));
 		meta.addEnchant(glow, 1, true);
+		
+		meta.setLocalizedName("spectator.compass");
+		meta.setUnbreakable(true);
 		
 		item.setItemMeta(meta);
 		
