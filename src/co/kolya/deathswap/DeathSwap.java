@@ -1,14 +1,10 @@
 package co.kolya.deathswap;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,7 +26,6 @@ public class DeathSwap extends JavaPlugin implements Listener {
 		getLogger().info("DeathSwap loaded");
 		Bukkit.getPluginManager().registerEvents(this, this);
 		this.saveDefaultConfig();
-		this.registerGlow();
 	}
 	
 	@Override
@@ -107,24 +102,4 @@ public class DeathSwap extends JavaPlugin implements Listener {
 		
 		this.gameManager.handleItemUse(player, item);
 	}
-	
-	public void registerGlow() {
-        try {
-            Field f = Enchantment.class.getDeclaredField("acceptingNew");
-            f.setAccessible(true);
-            f.set(null, true);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            Glow glow = new Glow(new NamespacedKey(this, "Enchantment.GLOW"));
-            Enchantment.registerEnchantment(glow);
-        }
-        catch (IllegalArgumentException e){
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
 }
