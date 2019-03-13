@@ -7,8 +7,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class GameManager {
 	private final ArrayList<Game> games;
@@ -145,19 +143,5 @@ public class GameManager {
 				return;
 			}
 		} 
-	}
-	
-	public void handleItemUse(Player player, ItemStack item) {
-		ItemMeta meta = item.getItemMeta();
-		String name = meta.getLocalizedName();
-
-		if (name.equals("spectator.compass")) {
-			for (Game game : this.games ) {
-				if (game.hasPlayer(player)) {
-					game.rotateSpectator(player);
-					return;
-				}
-			}
-		}
 	}
 }

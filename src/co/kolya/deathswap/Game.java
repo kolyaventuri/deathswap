@@ -10,8 +10,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.ChatColor;
@@ -35,14 +33,12 @@ public class Game {
 	
 	private ArrayList<Player> players;
 	private ArrayList<Player> deadPlayers;
-	private Map<Player, Integer> spectators;
 	
 	public Game(Player owner, GameManager gameManager) {
 		this.gameManager = gameManager;
 		this.owner = owner;
 		this.players = new ArrayList<Player>();
 		this.deadPlayers = new ArrayList<Player>();
-		this.spectators = new HashMap<Player, Integer>();
 		
 		this.id = IDGenerator.random(this.idLength);
 		
@@ -130,34 +126,6 @@ public class Game {
 			player.sendTitle("" + ChatColor.BOLD + ChatColor.RED + "You have died.", "", 70, 0, 20);
 			player.sendMessage("Press " + ChatColor.YELLOW + ChatColor.BOLD + "1" + ChatColor.RESET + " to spectate the remaining players!");
 		}
-	}
-	
-	public void rotateSpectator(Player player) {
-		Object currIndex = this.spectators.get(player);
-		if (currIndex == null) { currIndex = 0; }
-		
-		int newIndex = (int)currIndex;
-		
-		for (int i = 0; i < this.players.size(); i++) {
-			newIndex++;
-			if (newIndex == this.players.size()) {
-				newIndex = 0;
-			}
-			
-			Player p = this.players.get(newIndex);
-			
-			if (!this.deadPlayers.contains(p)) {
-				break;
-			}
-		}
-		
-		this.spectators.put(player, newIndex);
-		this.setSpectating(player, this.players.get(newIndex));
-	}
-	
-	private void setSpectating(Player me, Player them) {
-		me.teleport(them);
-		me.sendTitle("Now spectating " + ChatColor.YELLOW + them.getDisplayName(), "", 10, 40, 20);
 	}
 
 	private void clearStats() {

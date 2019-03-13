@@ -10,9 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 
 public class DeathSwap extends JavaPlugin implements Listener {
 	private final GameManager gameManager;
@@ -93,13 +91,5 @@ public class DeathSwap extends JavaPlugin implements Listener {
 	public void onQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		this.gameManager.handleQuit(player);
-	}
-	
-	@EventHandler(priority=EventPriority.NORMAL)
-	public void onPlayerUse(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		ItemStack item = event.getItem();
-		
-		this.gameManager.handleItemUse(player, item);
 	}
 }
